@@ -5,19 +5,21 @@ from bs4 import BeautifulSoup
 app = Flask(__name__)
 
 def get_notice():
-    url = "https://trickcal.yostar.kr/news.rss"
-    res = requests.get(url, timeout=5)
-    soup = BeautifulSoup(res.text, "xml")
+    url = "https://game.naver.com/lounge/Trickcal/board/11"
+    headers = {"User-Agent": "Mozilla/5.0"}
 
-    first = soup.find("item")
-    if first is None:
-        return "⚠ 공지 데이터를 불러오지 못했습니다."
+    res = requests.get(url, headers=headers)
+    soup = BeautifulSoup(res.text, "html.parser")
 
-    title = first.title.text.strip()
-    link = first.link.text.strip()
-    date = first.pubDate.text.strip()
+    titles = soup.select(".title_area .title")
+    
+    if not titles:
+        return "⚠️ 공지를 불러올 수 없습니다."
 
-    return f"[최근 공지]\n{title}\n({date})\n\n바로가기: {link}"
+    first_title = titles[0].get_text(strip=True)
+    first_link = "https://game.naver.com" + titles[0]["href"]
+
+    return f"📢 트릭컬 최신 공지\n\n{first_title}\n{first_link}"
 
 @app.route("/", methods=["POST"])
 def skill():
@@ -25,11 +27,5 @@ def skill():
         "version": "2.0",
         "template": {
             "outputs": [
-                {"simpleText": {"text": get_notice()}}
-            ]
-        }
-    })
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
 

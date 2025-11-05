@@ -1,0 +1,18 @@
+{
+  "name": "trickcal-update-bot",
+  "version": "1.0.0",
+  "description": "Trickcal Reverse update notice bot for Kakao i Open Builder",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "cheerio": "^1.0.0-rc.12",
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

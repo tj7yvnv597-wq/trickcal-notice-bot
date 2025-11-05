@@ -5,15 +5,20 @@ from bs4 import BeautifulSoup
 app = Flask(__name__)
 
 def get_notice():
-    url = "https://trickcal.com/news/notice"
+    url = "https://trickcal.yostar.kr/news"
     res = requests.get(url)
     soup = BeautifulSoup(res.text, "html.parser")
 
-    first_notice = soup.select_one(".board-list-wrap a")
-    title = first_notice.select_one(".tit").text.strip()
-    link = "https://trickcal.com" + first_notice.get("href")
+    # 공지 리스트 가져오기 (현재 페이지 구조 기준)
+    notice = soup.select_one(".news_list li a")
+    if notice is None:
+        return "⚠ 공지 데이터를 가져오지 못했습니다."
 
-    return f"📢 트릭컬 최신 공지\n\n{title}\n{link}"
+    title = notice.select_one(".title").text.strip()
+    date = notice.select_one(".date").text.strip()
+    link = "https://trickcal.yostar.kr" + notice.get("href")
+
+    return f"[최근 공지]\n{title}\n({date})\n\n바로가기: {link}"
 
 @app.route("/", methods=["POST"])
 def skill():
